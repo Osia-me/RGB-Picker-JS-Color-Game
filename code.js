@@ -1,65 +1,48 @@
-var colors = generateRandomColor(6);
+var numbSquares = 6;
+var colors = [];
+var pickedColor;
+var comments = ["Not really", "Not even close", "Keep trying", "Hm, no-no", "Try harder", "Wrong", "No", "It's not", "Try more"];
 
 var squares = document.querySelectorAll(".square");
-var pickedColor = pickColor();
 var colorDisplay =document.getElementById("colorDisplay");
 var message = document.getElementById("message");
 var h1 = document.querySelector("h1");
 var newColorsButton = document.getElementById("reset");
-var easyBtn = document.getElementById("easyBtn");
-var hardBtn = document.getElementById("hardBtn");
-var numbSquares = 6;
+var modeButtons = document.querySelectorAll(".mode");
+// var easyBtn = document.getElementById("easyBtn");
+// var hardBtn = document.getElementById("hardBtn");
 
-easyBtn.addEventListener("click", function(){
-	hardBtn.classList.remove("selected");
-	easyBtn.classList.add("selected");
-	numbSquares = 3;
-	colors = generateRandomColor(numbSquares);
-	pickedColor = pickColor();
-	colorDisplay.textContent = pickedColor;
-	for(var i = 0; i < squares.length; i++){
-		if (colors[i]){
-			squares[i].style.backgroundColor = colors[i];
-		} else {
-			squares[i].style.display = "none";
-		}
+init();
+
+function init (){
+
+	//mode buttons event listeners adding
+	setUpModeButtons();
+	//coloring the squares
+	setUpsquares();
+	reset();
+};
+
+function setUpModeButtons(){
+	for(var i = 0; i < modeButtons.length; i++){
+		modeButtons[i].addEventListener("click", function(){
+			modeButtons[0].classList.remove("selected");
+			modeButtons[1].classList.remove("selected");
+			this.classList.add("selected");
+
+			if(this.textContent === "Easy"){
+				numbSquares = 3;
+			} else {
+				numbSquares = 6;
+			}
+
+			reset();
+		});
 	}
-});
+}
 
-hardBtn.addEventListener("click", function(){
-	hardBtn.classList.add("selected");
-	easyBtn.classList.remove("selected");
-	numbSquares = 6;
-	colors = generateRandomColor(numbSquares);
-	pickedColor = pickColor();
-	colorDisplay.textContent = pickedColor;
+function setUpsquares(){
 	for(var i = 0; i < squares.length; i++){
-		squares[i].style.backgroundColor = colors[i];
-		squares[i].style.display = "block";
-	}
-});
-
-newColorsButton.addEventListener("click", function(){
-	//generate all new colors
-	colors = generateRandomColor(numbSquares);
-	//pick a new random color
-	pickedColor = pickColor();
-	//change colorDisplay to match picked color
-	colorDisplay.textContent = pickedColor;
-	//change colors of squares
-	for(var i = 0; i < squares.length; i++){
-		squares[i].style.backgroundColor = colors[i];
-	}
-	h1.style.backgroundColor = "#232323";
-});
-
-colorDisplay.textContent = pickedColor;
-
-
-for(var i = 0; i < squares.length; i++){
-
-	//to make 6 squares background color different random colors (taking colors from colors array)
-	squares[i].style.backgroundColor = colors[i];
 
 	//add click listeners to squares
 	squares[i].addEventListener("click", function(){
@@ -72,11 +55,84 @@ for(var i = 0; i < squares.length; i++){
 			//change the color to the one goal color
 			changeColors(clickedColor);
 		} else {
-			this.style.backgroundColor = "#232323";
-			message.textContent = "Not really";
+			this.style.backgroundColor = "#261814";
+			message.textContent = pickComment();
 		}
 	});
 }
+}
+
+
+function reset(){
+	//generate all new colors
+	colors = generateRandomColor(numbSquares);
+	//pick a new random color
+	pickedColor = pickColor();
+	//change colorDisplay to match picked color
+	colorDisplay.textContent = pickedColor;
+	//make #message empty
+	message.textContent = "";
+	//change the name of the button to "New Colors again"
+	newColorsButton.textContent = "New Colors";
+	//change colors of squares
+	for(var i = 0; i < squares.length; i++){
+
+		if (colors[i]) {
+			squares[i].style.display = "block";
+			squares[i].style.backgroundColor = colors[i];
+		} else {
+			squares[i].style.display = "none";
+		}
+
+	}
+
+	h1.style.backgroundColor = "#c19489";
+}
+
+// easyBtn.addEventListener("click", function(){
+// 	hardBtn.classList.remove("selected");
+// 	easyBtn.classList.add("selected");
+	
+// 	numbSquares = 3;
+// 	colors = generateRandomColor(numbSquares);
+// 	pickedColor = pickColor();
+// 	colorDisplay.textContent = pickedColor;
+// 	//loop through the squares array (6 times)
+// 	for(var i = 0; i < squares.length; i++){
+// 		//if there is a value (color) that means that condition = true
+// 		if (colors[i]){
+// 			// we have only 3 colors in a colors array. Pick the color for square
+// 			squares[i].style.backgroundColor = colors[i];
+// 			squares[i].classList.remove("hard");
+// 			squares[i].classList.add("easy");
+// 			//if the statement if false (and it is after 3d square, because colors only 3 and all other squares set to undefined = false)
+// 		} else {
+// 			//make all false disappear
+// 			squares[i].style.display = "none";
+// 		}
+// 	}
+// 	h1.style.backgroundColor = "#c19489";
+// });
+
+// hardBtn.addEventListener("click", function(){
+// 	hardBtn.classList.add("selected");
+// 	easyBtn.classList.remove("selected");
+// 	numbSquares = 6;
+// 	colors = generateRandomColor(numbSquares);
+// 	pickedColor = pickColor();
+// 	colorDisplay.textContent = pickedColor;
+// 	for(var i = 0; i < squares.length; i++){
+// 		squares[i].style.backgroundColor = colors[i];
+// 		squares[i].classList.remove("easy");
+// 		squares[i].classList.add("hard");
+// 		squares[i].style.display = "block";
+// 	}
+// 	h1.style.backgroundColor = "#c19489";
+// });
+
+newColorsButton.addEventListener("click", function(){
+	reset();
+});
 
 function changeColors(color){
 	//loop trough all squares
@@ -88,10 +144,17 @@ function changeColors(color){
 }
 
 function pickColor() {
-	//generate random number from 0 to the second number of array (from 0 to 2 or from 0 to 5)
+	//generate random number from 0 to the last number of array (from 0 to 2 or from 0 to 5)
 	var random = Math.floor(Math.random() * colors.length);
 	//return random index of the colors array
 	return colors[random];
+}
+
+function pickComment(){
+	//generate random number from 0 to the last number of array (from 0 to 2 or from 0 to 5)
+	var randomCom = Math.floor(Math.random() * comments.length);
+	//return random index of the comments array
+	return comments[randomCom];
 }
 
 function generateRandomColor(numb){
