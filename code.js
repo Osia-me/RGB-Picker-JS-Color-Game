@@ -130,10 +130,14 @@ function pickColor() {
 }
 
 function pickComment(){
+
 	//generate random number from 0 to the last number of array (from 0 to 2 or from 0 to 5)
 	var randomCom = Math.floor(Math.random() * comments.length);
-	//return random index of the comments array
-	return comments[randomCom];
+	//return random index of the comments array 
+	var printCom = comments[randomCom];
+	//delete this comment for the next iteration
+	comments.splice(randomCom, 1);
+	return printCom;
 }
 
 function generateRandomColor(numb){
